@@ -97,12 +97,12 @@ window.SL_ADAPT = (function () {
   var GUIDES = {
     A: {
       doc: [
-        { act: 'click', to: byText('시험 준비'), at: [0.12, 0.6], text: '왼쪽 <b>목록 창</b>에서 그룹을 누르면 그 그룹의 기록만 보여요.' },
+        { act: 'click', to: byText('마케팅'), at: [0.12, 0.6], text: '왼쪽 <b>목록 창</b>에서 그룹을 누르면 그 그룹의 기록만 보여요.' },
         { act: 'click', to: sel('input[placeholder*="찾기"]'), at: [0.42, 0.08], text: '위쪽 <b>검색창</b>에 제목을 적어 찾을 수도 있어요.' },
-        { act: 'click', to: byText('시험 일정.csv'), at: [0.5, 0.6], text: '목록에서 기록을 누르면 <b>상세</b>가 열려요.' },
+        { act: 'click', to: byText('광고 채널별 성과.csv'), at: [0.5, 0.6], text: '목록에서 기록을 누르면 <b>상세</b>가 열려요.' },
       ],
       space: [
-        { act: 'click', to: byText('시험 준비', 'right'), at: [0.3, 0.4], text: '<b>행성 하나가 그룹 하나</b>예요. 행성을 누르면 날아가서 착륙해요.' },
+        { act: 'click', to: byText('마케팅', 'right'), at: [0.3, 0.4], text: '<b>행성 하나가 그룹 하나</b>예요. 행성을 누르면 날아가서 착륙해요.' },
         { act: 'keys', keys: ['W', 'A', 'S', 'D'], from: null, at: [0.45, 0.5], to: null, drag: [0.65, 0.42], text: '키보드 <b>W · A · S · D</b>로 날고, 마우스를 끌어 둘러봐요.' },
         { act: 'click', to: null, at: [0.86, 0.45], text: '착륙하면 오른쪽에 <b>그룹 창</b>이 열려요. 거기서 기록을 누르면 상세가 열려요.' },
       ],
@@ -110,13 +110,13 @@ window.SL_ADAPT = (function () {
     B: {
       doc: [
         { act: 'click', to: sel('#q'), at: [0.4, 0.3], text: '<b>검색창</b>에 제목을 적어 찾아요.' },
-        { act: 'click', to: byText('시험 준비', 'left'), at: [0.15, 0.7], text: '왼쪽 <b>행성 고르기</b>에서 행성(그룹)을 누르면 그 행성의 기록만 보여요.' },
-        { act: 'click', to: byText('시험 일정.csv'), at: [0.5, 0.6], text: '목록에서 기록을 누르면 <b>상세</b>가 열려요.' },
+        { act: 'click', to: byText('마케팅', 'left'), at: [0.15, 0.7], text: '왼쪽 <b>행성 고르기</b>에서 행성(그룹)을 누르면 그 행성의 기록만 보여요.' },
+        { act: 'click', to: byText('광고 채널별 성과.csv'), at: [0.5, 0.6], text: '목록에서 기록을 누르면 <b>상세</b>가 열려요.' },
       ],
       space: [
         { act: 'keys', keys: ['W', 'A', 'S', 'D'], at: [0.45, 0.5], drag: [0.65, 0.42], text: '<b>행성 하나가 그룹 하나</b>예요. <b>W · A · S · D</b>로 날고, 마우스를 끌어 둘러봐요.' },
         { act: 'keys', keys: ['Enter'], at: [0.55, 0.45], text: '행성 가까이에서 <b>Enter</b>를 누르면 착륙해요.' },
-        { act: 'click', to: byText('시험 준비'), at: [0.12, 0.45], text: '왼쪽 <b>‘행성으로 바로 날아가기’</b>에서 행성을 눌러도 돼요. 착륙하면 기록 목록이 보여요.' },
+        { act: 'click', to: byText('마케팅'), at: [0.12, 0.45], text: '왼쪽 <b>‘행성으로 바로 날아가기’</b>에서 행성을 눌러도 돼요. 착륙하면 기록 목록이 보여요.' },
       ],
     },
     collector: [
