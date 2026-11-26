@@ -44,6 +44,7 @@ window.SL_ADAPT = (function () {
       var a = { id: rec.id, planet: rec.group === 'p7' ? 'p0' : rec.group, kind: rec.kind, title: rec.title, meta: rec.meta, memo: rec.memo || '', addedAt: rec.at };
       if (rec.body) a.body = rec.body;
       if (rec.csv) a.csv = rec.csv;
+      if (rec.thumb) a.thumb = rec.thumb;
       if (rec.kind === 'link') a.url = rec.body;
       localStorage.setItem(A_INBOX, JSON.stringify(list.concat([a])));
     } else {

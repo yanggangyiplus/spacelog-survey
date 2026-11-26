@@ -75,6 +75,9 @@
   #flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 8; }
   #flash.on { animation: flash .35s; }
   @keyframes flash { 30% { opacity: .7; } }
+  #snip { position: fixed; inset: 0; z-index: 7; cursor: crosshair; background: rgba(0,0,0,.35); touch-action: none; }
+  #snip p { position: absolute; left: 50%; top: 40px; transform: translateX(-50%); padding: 8px 16px; border-radius: 9999px; background: #fff; color: #1d1d1f; white-space: nowrap; pointer-events: none; }
+  #snipBox { position: absolute; border: 2px solid #fff; background: rgba(255,255,255,.12); box-shadow: 0 0 0 1px #0066cc; pointer-events: none; }
   [hidden] { display: none !important; }
   @media (max-width: 720px) { #win { left: 8px; right: 8px; width: auto; top: 36px; height: 52%; } #icons { top: auto; bottom: 150px; left: 8px; right: auto; grid-auto-flow: column; } #tip { left: 8px; right: 8px; max-width: none; bottom: 8px; } }
 </style>
@@ -121,6 +124,7 @@
   <button type="button" class="pill main" id="cardOk">확인</button>
 </div>
 <input type="file" id="file" multiple hidden>
+<div id="snip" hidden><p>캡처할 영역을 끌어서 선택하세요 · Esc로 취소</p><i id="snipBox" hidden></i></div>
 <div id="flash"></div>
 <div id="toast" role="status"></div>
 
@@ -176,7 +180,7 @@
   function closeAll() { menu.hidden = think.hidden = card.hidden = true; $('hello').hidden = true; } // 말풍선은 처음 한 번만
   document.addEventListener('pointerdown', function (e) { if (!e.target.closest('.float, #pet, [data-copy]')) closeAll(); });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeAll();
+    if (e.key === 'Escape') { closeAll(); $('snip').hidden = true; snipFrom = null; }
     // 단축키 Cmd/Ctrl+Shift+Space: 클립보드를 바로 넣는다
     if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.code === 'Space') { e.preventDefault(); clipIn(false); }
   });
@@ -272,6 +276,44 @@
   });
   $('file').addEventListener('change', function () { Array.prototype.forEach.call(this.files, function (f) { fromFile(f).then(collect); }); this.value = ''; });
 
+  /* ---------- 캡처: 영역을 끌어서 고른다 ---------- */
+  var snipFrom = null;
+  function snipRect(e) { return { x: Math.min(snipFrom[0], e.clientX), y: Math.min(snipFrom[1], e.clientY), w: Math.abs(e.clientX - snipFrom[0]), h: Math.abs(e.clientY - snipFrom[1]) }; }
+  $('snip').addEventListener('pointerdown', function (e) { snipFrom = [e.clientX, e.clientY]; this.setPointerCapture(e.pointerId); });
+  $('snip').addEventListener('pointermove', function (e) {
+    if (!snipFrom) return;
+    var r = snipRect(e), b = $('snipBox');
+    b.style.left = r.x + 'px'; b.style.top = r.y + 'px'; b.style.width = r.w + 'px'; b.style.height = r.h + 'px'; b.hidden = false;
+  });
+  $('snip').addEventListener('pointerup', function (e) {
+    if (!snipFrom) return;
+    var r = snipRect(e); snipFrom = null; $('snip').hidden = true;
+    if (r.w < 8 || r.h < 8) { toast('영역이 너무 작아요. 끌어서 넓게 선택해 주세요.'); return; }
+    var f = $('flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on');
+    var d = new Date(), p = function (n) { return String(n).padStart(2, '0'); };
+    var it = { kind: 'image', title: '캡처 ' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + '.' + p(d.getMinutes()) + '.' + p(d.getSeconds()) + '.png', meta: 'PNG · ' + Math.round(r.w) + '×' + Math.round(r.h) };
+    shot(r).then(function (thumb) { if (thumb) it.thumb = thumb; collect(it); });
+  });
+  // 고른 영역을 그림으로 만든다: 이 화면을 SVG에 담아 그린 뒤 잘라 낸다.
+  // shortcut: 바깥에서 불러오는 그림(우주 비행사)과 웹 서체는 빠진다. 브라우저가 막으면 그림 없이 기록만 남긴다. 실제 앱은 운영체제의 화면 캡처를 쓴다
+  function shot(r) {
+    return new Promise(function (res) {
+      try {
+        var clone = document.documentElement.cloneNode(true);
+        clone.querySelectorAll('script, link, #snip, #toast, #flash, #pet, .float, input').forEach(function (n) { n.remove(); });
+        var W = innerWidth, H = innerHeight, im = new Image();
+        im.onload = function () {
+          try {
+            var k = Math.min(1, 640 / Math.max(r.w, r.h)), c = document.createElement('canvas'); c.width = Math.max(1, Math.round(r.w * k)); c.height = Math.max(1, Math.round(r.h * k));
+            c.getContext('2d').drawImage(im, r.x, r.y, r.w, r.h, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', 0.8));
+          } catch (e) { res(null); }
+        };
+        im.onerror = function () { res(null); };
+        im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '"><foreignObject width="100%" height="100%">' + new XMLSerializer().serializeToString(clone) + '</foreignObject></svg>');
+      } catch (e) { res(null); }
+    });
+  }
+
   /* ---------- 클립보드 ---------- */
   // shortcut: 메뉴는 이 화면에서 복사한 글만 안다(브라우저는 허락 없이 클립보드를 읽지 못한다). 단축키를 누르면 그때 실제 클립보드를 물어본다
   function clipIn(asMeeting) {
@@ -290,8 +332,7 @@
     closeAll();
     var items = [
       ['✏️ 지금 내 생각 적기', function () { near(think); $('thinkIn').value = ''; $('thinkIn').focus(); }],
-      ['📸 캡처', function () { var f = $('flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); var d = new Date(), p = function (n) { return String(n).padStart(2, '0'); };
-        collect({ kind: 'image', title: '캡처 ' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + '.' + p(d.getMinutes()) + '.png', meta: 'PNG · 화면 캡처' }); }],
+      ['📸 캡처', function () { $('snipBox').hidden = true; $('snip').hidden = false; }],
       ['📎 파일 선택', function () { $('file').click(); }],
       null,
       ['🌌 우주 열기', function () { toast('우주는 다음 태스크에서 열려요.'); }],
