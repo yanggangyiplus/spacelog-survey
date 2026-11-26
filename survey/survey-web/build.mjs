@@ -23,11 +23,14 @@ fs.writeFileSync(path.join(dist, 'data.js'), 'window.SL_DATA = ' + JSON.stringif
 
 // 시안 A: 묶음 파일 안의 데이터 스크립트를 찾아, 예시 기록을 공통 데이터로 바꾼다.
 const SEED = `
-  { const D = ${JSON.stringify(data.records)}; stars.length = 0;
+  { const G = ${JSON.stringify(Object.fromEntries(data.groups.map((g) => [g.id === 'p7' ? 'p0' : g.id, g.name])))};
+    planets.forEach(p => { if (G[p.id]) p.name = G[p.id]; });
+    const D = ${JSON.stringify(data.records)}; stars.length = 0;
+    const KIND = { csv: 'file', text: 'text', link: 'link', image: 'image' }, META = { csv: 'CSV · ', text: '텍스트 · ', link: '', image: '' };
     D.forEach(r => { const d = dayStart(now); d.setHours(r.hour, r.minute);
-      stars.push({ id: r.id, planet: r.group === 'p7' ? 'p0' : r.group, kind: r.kind === 'csv' ? 'file' : 'text', title: r.title,
-        meta: (r.kind === 'csv' ? 'CSV · ' : '텍스트 · ') + r.size, memo: r.memo, addedAt: d.toISOString(),
-        ...(r.body ? { body: r.body } : {}), ...(r.csv ? { csv: r.csv } : {}) }); }); }
+      stars.push({ id: r.id, planet: r.group === 'p7' ? 'p0' : r.group, kind: KIND[r.kind], title: r.title,
+        meta: META[r.kind] + r.size, memo: r.memo, addedAt: d.toISOString(),
+        ...(r.body ? { body: r.body } : {}), ...(r.csv ? { csv: r.csv } : {}), ...(r.url ? { url: r.url } : {}), ...(r.thumb ? { thumb: r.thumb } : {}) }); }); }
 `;
 const MARK = '// 데모 시드';
 let html = fs.readFileSync(path.join(survey, 'design draft_A/A-SPACELOG.html'), 'utf8');

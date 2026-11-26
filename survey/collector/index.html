@@ -88,13 +88,13 @@
     <button type="button" class="pill" data-copy="2">주소 복사</button>
   </div>
   <article>
-    <h1>기록을 다시 찾게 만드는 UX 글쓰기</h1>
+    <h1>수학 공식을 오래 기억하는 복습 방법</h1>
     <p class="by">예시 블로그 · 읽는 데 3분</p>
-    <p>좋은 기록 도구는 넣는 순간보다 다시 찾는 순간을 먼저 생각합니다. 제목이 기억나지 않아도, 어디에 넣었는지 잊어도 찾을 수 있어야 합니다.</p>
+    <p>공식을 한 번에 오래 외우려 하면 금방 잊어버립니다. 짧게 여러 번, 간격을 두고 다시 보는 쪽이 훨씬 오래 남습니다.</p>
     <blockquote draggable="true" data-sample="3" title="끌어다 놓을 수 있어요"></blockquote>
     <figure draggable="true" data-sample="4" title="이미지를 끌어다 놓을 수 있어요">
-      <svg viewBox="0 0 420 200" role="img" aria-label="온보딩 화면 예시 그림"><rect width="420" height="200" fill="#1b2036"/><circle cx="96" cy="100" r="46" fill="#2f6fe0"/><ellipse cx="96" cy="100" rx="72" ry="16" fill="none" stroke="#fff" stroke-width="5" transform="rotate(-18 96 100)"/><rect x="200" y="58" width="170" height="16" rx="8" fill="#fff"/><rect x="200" y="88" width="130" height="12" rx="6" fill="#8e9dcc"/><rect x="200" y="110" width="150" height="12" rx="6" fill="#8e9dcc"/><rect x="200" y="140" width="84" height="26" rx="13" fill="#0066cc"/></svg>
-      <figcaption>온보딩 화면 예시.png</figcaption>
+      <svg viewBox="0 0 420 200" role="img" aria-label="망각 곡선 그래프"><rect width="420" height="200" fill="#f5f5f7"/><path d="M50 20V165H390" fill="none" stroke="#aeaeb2" stroke-width="2"/><path d="M50 35C90 130 170 150 390 158" fill="none" stroke="#c2561f" stroke-width="4"/><path d="M50 35C120 60 250 75 390 82" fill="none" stroke="#2f6fe0" stroke-width="4"/><text x="250" y="70" font-size="13" fill="#2f6fe0">복습했을 때</text><text x="250" y="148" font-size="13" fill="#c2561f">복습하지 않았을 때</text></svg>
+      <figcaption>망각 곡선 그래프.png</figcaption>
     </figure>
     <p>글을 드래그해서 고른 뒤 끌어다 놓거나, 복사(Cmd/Ctrl+C)해도 수집할 수 있어요.</p>
   </article>
@@ -111,7 +111,7 @@
 <form id="think" class="float" hidden>
   <label for="thinkIn">지금 내 생각</label>
   <input id="thinkIn" maxlength="200" autocomplete="off" placeholder="한 줄 적고 Enter">
-  <small>Enter를 누르면 ‘생각 조각’ 그룹에 저장돼요. 바깥을 누르면 닫혀요.</small>
+  <small>Enter를 누르면 기록으로 저장돼요. 바깥을 누르면 닫혀요.</small>
 </form>
 <div id="card" class="float" role="dialog" aria-label="방금 넣은 기록" hidden>
   <h2 id="cardTitle"></h2>
@@ -186,11 +186,12 @@
   /* ---------- 기록 만들기 ---------- */
   // 키워드(확장자 · 도메인 · 낱말)로 그룹을 먼저 정한다. 맞는 것이 없으면 분류 안 된 기록(p7)
   var RULES = [
-    ['p6', /\.(csv|tsv|xlsx?)$|엑셀/i],
-    ['p5', /회의|미팅|안건/],
-    ['p1', /prd|기획|요구사항|로드맵|정책|\.(key|pptx?)$/i],
-    ['p4', /\.(png|jpe?g|gif|webp|svg|fig)$|figma\.com|dribbble|behance|pinterest|디자인|레퍼런스/i],
-    ['p2', /^https?:\/\/|\.(pdf|epub)$|책|읽/i],
+    ['p1', /영어|english|단어|문법/i],
+    ['p2', /수학|math|방정식|함수|공식/i],
+    ['p3', /코딩|파이썬|python|javascript|프로그래밍/i],
+    ['p4', /한국사|역사|연표/],
+    ['p5', /과학|물리|화학|생물|실험|원소/],
+    ['p6', /시험|일정|계획|\.(csv|tsv|xlsx?)$/i],
   ];
   function classify(it) {
     var hay = (it.body || '') + '\n' + it.title; // 링크는 본문이 주소라 앞(^)에서, 파일은 제목이 뒤($)에서 걸린다
@@ -277,7 +278,7 @@
     var go = function (t) {
       var it = fromText(t);
       if (!it) { toast('클립보드가 비어 있어요.'); return; }
-      if (asMeeting) { it.kind = 'text'; it.title = '회의록 · ' + it.title; collect(it, 'p5'); } else collect(it);
+      if (asMeeting) { it.kind = 'text'; it.title = '회의록 · ' + it.title; collect(it); } else collect(it);
     };
     if (clip) return go(clip);
     if (navigator.clipboard && navigator.clipboard.readText) navigator.clipboard.readText().then(go, function () { go(''); }); else go('');
@@ -326,16 +327,16 @@
     e.preventDefault();
     var t = $('thinkIn').value.trim();
     if (!t) return;
-    collect({ kind: 'text', title: t.slice(0, 28), meta: '내 생각 · ' + t.length + '자', body: t }, 'p3');
+    collect({ kind: 'text', title: t.slice(0, 28), meta: '내 생각 · ' + t.length + '자', body: t });
   });
 
   /* ---------- 예시 자료: 바탕화면 파일 2개 + 브라우저 창의 주소 · 글 · 이미지 ---------- */
   var SAMPLES = [
-    { name: '주간회의 메모.txt', text: '11월 4주차 주간회의\n- 결정: 설문은 금요일에 연다\n- 할 일: 테스트 참가자 5명 모으기' },
-    { name: '독서 목록.csv', text: '제목,저자,읽은 날\n글쓰기의 기술,정우진,11/02\n프롬프트 노트,이서진,11/10\n숫자 읽는 기획,박지우,11/18' },
-    { name: 'https://blog.example.com/ux-writing-guide', plain: true },
-    { name: '기록은 넣는 것보다 다시 찾는 게 더 어렵다. 그래서 저장할 때 한 줄 메모를 남기게 하는 것만으로도 다시 찾을 확률이 크게 오른다.', plain: true },
-    { name: '온보딩 화면 예시.png', image: true },
+    { name: '영어 단어 시험 범위.txt', text: '영어 단어 시험 범위\n- Day 11~15\n- 금요일 1교시에 본다' },
+    { name: '이번 주 공부 계획.csv', text: '요일,과목,할 일\n월,수학,이차방정식 문제 20개\n수,영어,단어 Day 11~13\n금,과학,광합성 단원 복습' },
+    { name: 'https://blog.example.com/math-review', plain: true },
+    { name: '수학 공식은 배운 직후, 하루 뒤, 일주일 뒤에 한 번씩 다시 풀어 보면 가장 오래 기억에 남는다.', plain: true },
+    { name: '망각 곡선 그래프.png', image: true },
   ];
   function sampleItem(s) { return s.image ? { kind: 'image', title: s.name, meta: 'PNG · 이미지' } : s.plain ? fromText(s.name) : fromNamedText(s.name, s.text, s.text.length * 3); }
   $('urlText').textContent = SAMPLES[2].name.replace('https://', '');
@@ -359,7 +360,7 @@
   document.addEventListener('copy', function () { var t = String(getSelection()).trim(); if (t) clip = t; });
 
   // 자가 점검: 그룹 배정 규칙이 기대대로인지 (어긋나면 콘솔에 알린다)
-  console.assert(classify(sampleItem(SAMPLES[0])) === 'p5' && classify(sampleItem(SAMPLES[1])) === 'p6' && classify(sampleItem(SAMPLES[2])) === 'p2' && classify(sampleItem(SAMPLES[3])) === 'p7' && classify(sampleItem(SAMPLES[4])) === 'p4', '그룹 배정 규칙이 예시와 맞지 않아요');
+  console.assert(classify(sampleItem(SAMPLES[0])) === 'p1' && classify(sampleItem(SAMPLES[1])) === 'p6' && classify(sampleItem(SAMPLES[2])) === 'p2' && classify(sampleItem(SAMPLES[3])) === 'p2' && classify(sampleItem(SAMPLES[4])) === 'p7', '그룹 배정 규칙이 예시와 맞지 않아요');
 })();
 </script>
 </body>

@@ -4,8 +4,8 @@
 window.SL_QUESTIONS = {
   // 디자인마다 이 순서로 한다. {target}은 찾을 기록 제목으로 바뀐다
   tasks: [
-    { id: 't1', screen: 'doc', title: '문서 보기에서 기록 찾아보기', target: '알림 정책 초안', text: '‘{target}’ 기록을 찾아서 열어 보세요.' },
-    { id: 't2', screen: 'space', title: '공간 보기에서 기록 찾아보기', target: '탐사선 아이콘 아이디어', text: '‘{target}’ 기록을 찾아서 열어 보세요.' },
+    { id: 't1', screen: 'doc', title: '문서 보기에서 기록 찾아보기', target: '광합성 한 줄 정리', text: '‘{target}’ 기록을 찾아서 열어 보세요.' },
+    { id: 't2', screen: 'space', title: '공간 보기에서 기록 찾아보기', target: '영어 불규칙 동사 정리', text: '‘{target}’ 기록을 찾아서 열어 보세요.' },
     { id: 't3', screen: 'collector', title: '수집앱 사용해보기', text: '글을 읽다가 기록하고 싶은 게 생겼어요. 수집 앱으로 저장하고 싶은 기록물을 저장해 보세요.' },
   ],
   taskResults: ['완료', '모르겠어요', '건너뛰기'],
