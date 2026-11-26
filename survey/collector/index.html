@@ -135,7 +135,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var GROUPS = window.SL_DATA.groups;
   var pet = $('pet'), menu = $('menu'), think = $('think'), card = $('card');
-  var clip = '', exploring = false, exploreCount = 0, current = null;
+  var clip = '', current = null;
 
   /* ---------- 캐릭터: 그 디자인의 우주 비행사 (주소의 ?design=A|B) ---------- */
   var DESIGN = new URLSearchParams(location.search).get('design') === 'B' ? 'B' : 'A';
@@ -236,7 +236,6 @@
       return new Promise(function (res) { setTimeout(res, 1300); }).then(function () {
         $('busy').hidden = true;
         var rec = Object.assign({ id: 'in' + Date.now(), at: new Date().toISOString(), memo: '', group: group || classify(it) }, it);
-        if (exploring) exploreCount++;
         send(rec); showCard(rec);
       });
     });
@@ -334,15 +333,6 @@
       ['✏️ 지금 내 생각 적기', function () { near(think); $('thinkIn').value = ''; $('thinkIn').focus(); }],
       ['📸 캡처', function () { $('snipBox').hidden = true; $('snip').hidden = false; }],
       ['📎 파일 선택', function () { $('file').click(); }],
-      null,
-      ['🌌 우주 열기', function () { toast('우주는 다음 태스크에서 열려요.'); }],
-      ['💬 우주먼지', function () { toast('우주먼지는 다음 태스크의 화면에서 만날 수 있어요.'); }],
-      [exploring ? '🔭 탐사 종료' : '🔭 탐사 시작', function () {
-        exploring = !exploring;
-        if (exploring) { exploreCount = 0; toast('탐사를 시작했어요. 지금부터 넣는 기록을 모아 둘게요.'); }
-        else toast('탐사를 마쳤어요. 그동안 기록 ' + exploreCount + '개를 모았어요. 정리본은 테스트에서 만들지 않아요.');
-      }],
-      ['⏳ 분석 대기 항목 다시 시도', function () { toast('분석을 기다리는 기록이 없어요.'); }],
       null,
       ['앱 종료', function () { toast('테스트에서는 앱을 종료하지 않아요.'); }],
     ];
