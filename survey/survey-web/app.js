@@ -28,12 +28,12 @@
     $('acts').innerHTML = '';
     Q.taskResults.forEach(function (label, i) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'pill' + (i === 0 ? ' main' : ''); b.textContent = label;
-      // 수집 태스크의 완료는 기록이 하나 저장된 뒤에만 누를 수 있다
-      if (i === 0 && collector) { b.id = 'doneBtn'; b.disabled = true; b.title = '기록을 하나 저장하면 누를 수 있어요'; }
       b.addEventListener('click', function () { finish(label); });
       $('acts').appendChild(b);
     });
-    startedAt = 0; frameReady = false; openGuide();
+    // 튜토리얼은 첫 번째 디자인에서만 저절로 뜬다(두 디자인의 기능이 같다). 두 번째 디자인은 바로 시작하고, 필요하면 '튜토리얼' 버튼으로 본다
+    frameReady = false;
+    if (s.round === 1) { startedAt = 0; openGuide(); } else { demo++; $('guide').hidden = true; startedAt = Date.now(); }
     frame.src = collector ? 'collector/index.html?design=' + s.design : A.viewUrl(s.design, s.task.screen);
   }
   /* ---------- 튜토리얼: 화면 위에서 마우스가 움직이며 할 일을 시연한다. 닫는 순간부터 시간을 잰다 ---------- */
@@ -57,8 +57,6 @@
     $('guideCap').innerHTML = st.text; // adapters.js의 고정 글
     Array.prototype.forEach.call($('guideDots').children, function (d, k) { d.classList.toggle('on', k === i); });
     var to = rectOf(st.to, st.at), cur = $('cursor'), ghost = $('ghost'), keys = $('keys');
-    // 설명 상자가 대상을 가리지 않게: 대상이 아래쪽이면 상자를 위로
-    $('guide').classList.toggle('top', mid(to)[1] > $('stage').clientHeight * 0.55 && st.act !== 'keys');
     ring(null); ghost.hidden = true; keys.hidden = true;
     if (st.act === 'keys') {
       keys.innerHTML = st.keys.map(function (k) { return '<kbd>' + k + '</kbd>'; }).join('');
@@ -113,7 +111,6 @@
     if (e.origin !== location.origin || e.source !== frame.contentWindow || !s || e.data.type !== 'sl-record' || !r || typeof r.title !== 'string') return;
     A.upsert(s.design, r);
     saved[s.design] = r.title;
-    var b = $('doneBtn'); if (b) { b.disabled = false; b.title = ''; }
   });
 
   /* ---------- 저장 (Supabase) ---------- */

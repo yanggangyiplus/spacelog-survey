@@ -72,8 +72,7 @@ fieldset.bad { border-color: #ff8f7a; }
 #guideDots { display: flex; gap: 6px; }
 #guideDots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.25); }
 #guideDots i.on { background: #fff; }
-#guide.top .dock { bottom: auto; top: 12px; }
-#guide .dock { bottom: 12px; }
+#guide .dock { bottom: auto; top: 50%; translate: -50% -50%; }
 #guide .row .pill { height: 36px; }
 .choose { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .pick { display: grid; justify-items: center; gap: 14px; padding: 28px 16px 24px; border-radius: 18px; background: rgba(37,37,39,.78); border: 1px solid rgba(255,255,255,.12); backdrop-filter: saturate(180%) blur(20px); transition: transform .2s cubic-bezier(.25,.1,.25,1), background .2s; }
