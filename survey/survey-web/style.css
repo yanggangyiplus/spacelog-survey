@@ -79,3 +79,5 @@ fieldset.bad { border-color: #ff8f7a; }
 .pick:hover { background: rgba(72,72,74,.78); }
 .pick:active { transform: scale(.95); }
 .pick img { height: 150px; filter: drop-shadow(0 8px 14px rgba(0,0,0,.5)); }
+.pick[aria-pressed="true"] { border-color: #fff; background: rgba(72,72,74,.9); box-shadow: 0 0 0 3px #0066cc; }
+.why { display: grid; gap: 8px; }

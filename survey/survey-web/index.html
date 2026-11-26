@@ -57,11 +57,15 @@
 <main id="prefer" class="page" hidden>
   <p class="logo">SPACELOG</p>
   <h1 id="preferText"></h1>
-  <p>디자인 테스트가 끝났어요. 하나를 고르면 설문으로 넘어가요.</p>
+  <p>디자인 테스트가 끝났어요. 하나를 골라 주세요.</p>
   <div class="choose">
-    <button type="button" class="pick" data-pick="A"><img src="collector/astro-A.webp" alt=""><b class="badge" data-d="A">디자인 A</b></button>
-    <button type="button" class="pick" data-pick="B"><img src="collector/astro-B.png" alt=""><b class="badge" data-d="B">디자인 B</b></button>
+    <button type="button" class="pick" data-pick="A" aria-pressed="false"><img src="collector/astro-A.webp" alt=""><b class="badge" data-d="A">디자인 A</b></button>
+    <button type="button" class="pick" data-pick="B" aria-pressed="false"><img src="collector/astro-B.png" alt=""><b class="badge" data-d="B">디자인 B</b></button>
   </div>
+  <label class="why">고른 이유를 짧게 남겨 주세요 <small class="fine">선택</small>
+    <textarea id="preferWhy" maxlength="300" placeholder="예: 기록을 찾기가 더 쉬웠어요"></textarea>
+  </label>
+  <button type="button" class="pill main" id="preferGo" disabled>설문으로 넘어가기</button>
 </main>
 
 <main id="survey" class="page" hidden>

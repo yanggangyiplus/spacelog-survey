@@ -125,13 +125,17 @@
   }
   function sendTasks() {
     if (tasksSent) return Promise.resolve();
-    return save('tasks', { preference: preference, tasks: results, ua: navigator.userAgent, width: innerWidth }).then(function () { tasksSent = true; });
+    return save('tasks', { preference: preference, preference_reason: $('preferWhy').value.trim() || null, tasks: results, ua: navigator.userAgent, width: innerWidth }).then(function () { tasksSent = true; });
   }
 
   /* ---------- 설문 ---------- */
   var OTHER = '기타 (직접 입력)';
   // 어떤 디자인이 더 편했는지 고르면 태스크 결과와 함께 저장하고 설문으로 넘어간다
-  document.querySelectorAll('[data-pick]').forEach(function (b) { b.addEventListener('click', function () { preference = b.dataset.pick; openSurvey(); }); });
+  document.querySelectorAll('[data-pick]').forEach(function (b) { b.addEventListener('click', function () {
+    preference = b.dataset.pick; $('preferGo').disabled = false;
+    document.querySelectorAll('[data-pick]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+  }); });
+  $('preferGo').addEventListener('click', openSurvey);
   function openSurvey() {
     sendTasks().catch(function () { /* 설문을 낼 때 다시 보낸다 */ });
     $('surveyIntro').textContent = Q.intro;
