@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수집 앱 (테스트용)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body { font: 400 14px/1.43 'Pretendard Variable', Pretendard, -apple-system, sans-serif; color: #fff; word-break: keep-all;
+    background: radial-gradient(120% 90% at 70% 15%, #2a2f55 0%, transparent 55%), linear-gradient(165deg, #10131f, #1b2036 60%, #262a45); }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid #0071e3; outline-offset: 2px; }
+
+  #deskbar { position: absolute; inset: 0 0 auto 0; height: 28px; padding: 0 14px; display: flex; align-items: center; gap: 16px; font-size: 12px; background: rgba(20,22,34,.72); backdrop-filter: blur(20px); }
+  #deskbar b { font-weight: 600; }
+  #deskbar .sp { flex: 1; }
+  #win { position: absolute; left: 32px; top: 52px; width: min(760px, calc(100% - 300px)); height: min(560px, calc(100% - 150px)); display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: #fff; color: #1d1d1f; box-shadow: 0 24px 60px rgba(0,0,0,.5); }
+  #win .bar { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: #e8e8ed; }
+  #win .dots { display: flex; gap: 6px; }
+  #win .dots i { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; }
+  #win .dots i:nth-child(2) { background: #febc2e; } #win .dots i:nth-child(3) { background: #28c840; }
+  #win .url { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px; border-radius: 9999px; background: #fff; cursor: grab; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 13px; }
+  #win .pill { height: 30px; border-color: rgba(29,29,31,.16); color: #1d1d1f; font-size: 13px; }
+  #win article { flex: 1; overflow: auto; padding: 28px 36px 40px; display: grid; gap: 14px; align-content: start; font-size: 15px; line-height: 1.6; }
+  #win h1 { font-size: 24px; line-height: 1.25; font-weight: 600; }
+  #win .by { color: #6e6e73; font-size: 13px; }
+  #win blockquote { padding: 12px 16px; border-left: 3px solid #0066cc; background: #f5f5f7; border-radius: 0 10px 10px 0; cursor: grab; }
+  #win figure { cursor: grab; } #win figure svg { display: block; width: 100%; max-width: 420px; border-radius: 12px; }
+  #win figcaption { color: #6e6e73; font-size: 12px; margin-top: 4px; }
+  #win a { color: #0066cc; }
+  #icons { position: absolute; right: 28px; top: 52px; display: grid; gap: 14px; }
+  .item { width: 104px; padding: 8px 6px; display: grid; justify-items: center; gap: 4px; border-radius: 10px; text-align: center; cursor: grab; font-size: 12px; }
+  .item:hover { background: rgba(255,255,255,.1); }
+  .item .ic { font-size: 40px; line-height: 1; }
+  #tip { position: absolute; left: 32px; bottom: 20px; max-width: min(760px, calc(100% - 300px)); padding: 10px 14px; border-radius: 12px; background: rgba(37,37,39,.78); border: 1px solid rgba(255,255,255,.12); color: #ccc; font-size: 13px; }
+  #tip b { color: #fff; font-weight: 600; }
+  .pill { height: 32px; padding: 0 14px; border-radius: 9999px; background: transparent; border: 1px solid rgba(255,255,255,.16); white-space: nowrap; }
+  .pill.main { background: #0066cc; border-color: #0066cc; }
+  .pill:active { transform: scale(.95); }
+
+  #pet { position: absolute; touch-action: none; cursor: grab; user-select: none; }
+  #pet img { width: 100%; height: 100%; display: block; object-fit: contain; pointer-events: none; filter: drop-shadow(0 6px 10px rgba(0,0,0,.45)); animation: float 3s ease-in-out infinite; }
+  #pet.over img { animation: none; transform: scale(1.12); }
+  #pet.eat img { animation: eat .7s ease-in-out; }
+  @keyframes float { 50% { transform: translateY(-5px); } }
+  @keyframes eat { 20% { transform: scale(1.2, .82); } 45% { transform: scale(.88, 1.16); } 70% { transform: scale(1.08, .94); } }
+  @media (prefers-reduced-motion: reduce) { #pet img { animation: none !important; } }
+  #hello { position: absolute; right: calc(100% + 10px); bottom: 30%; width: 250px; padding: 12px 14px; border-radius: 14px 14px 4px 14px; background: #fff; color: #1d1d1f; font-size: 13px; line-height: 1.45; cursor: default; box-shadow: rgba(0,0,0,.22) 3px 5px 30px; }
+  #hello b { font-weight: 600; }
+  #busy { position: absolute; left: 50%; top: -26px; transform: translateX(-50%); padding: 2px 10px; border-radius: 9999px; background: #fff; color: #1d1d1f; font-size: 12px; white-space: nowrap; }
+  #grip { position: absolute; right: -6px; bottom: -6px; width: 18px; height: 18px; border-right: 3px solid rgba(255,255,255,.5); border-bottom: 3px solid rgba(255,255,255,.5); border-radius: 0 0 6px 0; cursor: nwse-resize; opacity: 0; }
+  #pet:hover #grip, #pet:focus-visible #grip { opacity: 1; }
+
+  .float { position: absolute; z-index: 5; background: rgb(30,30,32); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; box-shadow: rgba(0,0,0,.22) 3px 5px 30px; }
+  #menu { width: 260px; padding: 6px; }
+  #menu button { display: block; width: 100%; text-align: left; padding: 9px 12px; border: 0; border-radius: 10px; background: none; }
+  #menu button:hover { background: rgba(255,255,255,.08); }
+  #menu .clip { margin-bottom: 6px; padding: 10px 12px 6px; border-bottom: 1px solid rgba(255,255,255,.08); }
+  #menu .clip p { color: #ccc; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #menu hr { border: 0; border-top: 1px solid rgba(255,255,255,.08); margin: 6px 0; }
+  #think { width: 320px; height: 150px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  #think label { font-weight: 600; }
+  #think input, #card input, #card select { width: 100%; height: 40px; padding: 0 12px; border-radius: 12px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.16); }
+  #think small, #card small { color: #ccc; font-size: 12px; }
+  #card { width: 320px; padding: 16px; display: grid; gap: 10px; }
+  #card h2 { font-size: 15px; font-weight: 600; }
+  #card .sum { color: #ccc; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  #card label { display: grid; gap: 4px; font-size: 12px; color: #ccc; }
+  #card select option { color: #1d1d1f; }
+  #toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); padding: 10px 18px; border-radius: 9999px; background: #fff; color: #1d1d1f; box-shadow: rgba(0,0,0,.22) 3px 5px 30px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 9; max-width: 90vw; }
+  #toast.on { opacity: 1; }
+  #flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 8; }
+  #flash.on { animation: flash .35s; }
+  @keyframes flash { 30% { opacity: .7; } }
+  [hidden] { display: none !important; }
+  @media (max-width: 720px) { #win { left: 8px; right: 8px; width: auto; top: 36px; height: 52%; } #icons { top: auto; bottom: 150px; left: 8px; right: auto; grid-auto-flow: column; } #tip { left: 8px; right: 8px; max-width: none; bottom: 8px; } }
+</style>
+</head>
+<body>
+<div id="deskbar" aria-hidden="true"><b>내 컴퓨터</b><span>파일</span><span>편집</span><span>보기</span><span class="sp"></span><span id="clock"></span></div>
+<section id="win" aria-label="브라우저 창 (예시)">
+  <div class="bar">
+    <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="url" draggable="true" data-sample="2" title="주소를 끌어다 놓을 수 있어요">🔒 <span id="urlText"></span></span>
+    <button type="button" class="pill" data-copy="2">주소 복사</button>
+  </div>
+  <article>
+    <h1>기록을 다시 찾게 만드는 UX 글쓰기</h1>
+    <p class="by">예시 블로그 · 읽는 데 3분</p>
+    <p>좋은 기록 도구는 넣는 순간보다 다시 찾는 순간을 먼저 생각합니다. 제목이 기억나지 않아도, 어디에 넣었는지 잊어도 찾을 수 있어야 합니다.</p>
+    <blockquote draggable="true" data-sample="3" title="끌어다 놓을 수 있어요"></blockquote>
+    <figure draggable="true" data-sample="4" title="이미지를 끌어다 놓을 수 있어요">
+      <svg viewBox="0 0 420 200" role="img" aria-label="온보딩 화면 예시 그림"><rect width="420" height="200" fill="#1b2036"/><circle cx="96" cy="100" r="46" fill="#2f6fe0"/><ellipse cx="96" cy="100" rx="72" ry="16" fill="none" stroke="#fff" stroke-width="5" transform="rotate(-18 96 100)"/><rect x="200" y="58" width="170" height="16" rx="8" fill="#fff"/><rect x="200" y="88" width="130" height="12" rx="6" fill="#8e9dcc"/><rect x="200" y="110" width="150" height="12" rx="6" fill="#8e9dcc"/><rect x="200" y="140" width="84" height="26" rx="13" fill="#0066cc"/></svg>
+      <figcaption>온보딩 화면 예시.png</figcaption>
+    </figure>
+    <p>글을 드래그해서 고른 뒤 끌어다 놓거나, 복사(Cmd/Ctrl+C)해도 수집할 수 있어요.</p>
+  </article>
+</section>
+<section id="icons" aria-label="바탕화면 파일">
+  <div class="item" draggable="true" data-sample="0"><span class="ic" aria-hidden="true">📄</span><span class="nm"></span></div>
+  <div class="item" draggable="true" data-sample="1"><span class="ic" aria-hidden="true">📊</span><span class="nm"></span></div>
+</section>
+<p id="tip"><b>바탕화면에 떠 있는 우주 비행사가 수집 앱이에요.</b> 브라우저 창의 주소 · 글 · 이미지나 바탕화면 파일을 우주 비행사 위에 끌어다 놓으면 기록으로 저장돼요. 우주 비행사를 누르면 메뉴가 열려요.</p>
+<div id="pet" role="button" tabindex="0" aria-haspopup="menu" aria-label="수집 앱 우주 비행사. 누르면 메뉴가 열려요">
+  <span id="hello"><b>여기예요, 수집 앱이에요.</b><br>뭔가 하다가 기록하고 싶은 게 생기면 언제든지 저에게 끌어다 놓거나 저를 눌러서 수집해 보세요.</span><span id="busy" hidden>바쁨</span><i id="grip" aria-hidden="true"></i>
+</div>
+<div id="menu" class="float" role="menu" hidden></div>
+<form id="think" class="float" hidden>
+  <label for="thinkIn">지금 내 생각</label>
+  <input id="thinkIn" maxlength="200" autocomplete="off" placeholder="한 줄 적고 Enter">
+  <small>Enter를 누르면 ‘생각 조각’ 그룹에 저장돼요. 바깥을 누르면 닫혀요.</small>
+</form>
+<div id="card" class="float" role="dialog" aria-label="방금 넣은 기록" hidden>
+  <h2 id="cardTitle"></h2>
+  <p class="sum" id="cardSum"></p>
+  <label>그룹<select id="cardGroup"></select></label>
+  <label>한 줄 메모<input id="cardMemo" maxlength="100" autocomplete="off" placeholder="왜 저장했는지 적어 두세요"></label>
+  <button type="button" class="pill main" id="cardOk">확인</button>
+</div>
+<input type="file" id="file" multiple hidden>
+<div id="flash"></div>
+<div id="toast" role="status"></div>
+
+<script src="../data.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var GROUPS = window.SL_DATA.groups;
+  var pet = $('pet'), menu = $('menu'), think = $('think'), card = $('card');
+  var clip = '', exploring = false, exploreCount = 0, current = null;
+
+  /* ---------- 캐릭터: 그 디자인의 우주 비행사 (주소의 ?design=A|B) ---------- */
+  var DESIGN = new URLSearchParams(location.search).get('design') === 'B' ? 'B' : 'A';
+  pet.insertAdjacentHTML('afterbegin', '<img alt="" draggable="false" src="' + (DESIGN === 'B' ? 'astro-B.png' : 'astro-A.webp') + '">');
+
+  /* ---------- 위치와 크기: 저장하고, 화면 밖으로 나가지 않게 보정한다 ---------- */
+  var POS = 'sl_collector_pos_v1', st = { x: innerWidth - 200, y: innerHeight - 220, s: 140 };
+  try { Object.assign(st, JSON.parse(localStorage.getItem(POS))); } catch (e) { /* 처음 자리 */ }
+  function place(save) {
+    st.s = Math.max(64, Math.min(220, st.s));
+    st.x = Math.max(0, Math.min(innerWidth - st.s, st.x));
+    st.y = Math.max(28, Math.min(innerHeight - st.s, st.y));
+    pet.style.left = st.x + 'px'; pet.style.top = st.y + 'px'; pet.style.width = pet.style.height = st.s + 'px';
+    if (save) { try { localStorage.setItem(POS, JSON.stringify(st)); } catch (e) { /* 저장 못 해도 동작 */ } }
+  }
+  place(); addEventListener('resize', function () { place(true); menu.hidden = think.hidden = card.hidden = true; });
+
+  var drag = null;
+  pet.addEventListener('pointerdown', function (e) {
+    drag = { x: e.clientX, y: e.clientY, ox: st.x, oy: st.y, os: st.s, resize: e.target.id === 'grip', moved: false };
+    pet.setPointerCapture(e.pointerId);
+  });
+  pet.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+    drag.moved = true; closeAll();
+    if (drag.resize) st.s = drag.os + Math.max(dx, dy); else { st.x = drag.ox + dx; st.y = drag.oy + dy; }
+    place();
+  });
+  pet.addEventListener('pointerup', function () { var d = drag; drag = null; if (!d) return; if (d.moved) place(true); else toggleMenu(); });
+  pet.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMenu(); } });
+
+  /* ---------- 떠 있는 창 공통 ---------- */
+  function near(el) {
+    el.hidden = false;
+    var w = el.offsetWidth, h = el.offsetHeight, x = st.x - w - 12, y = st.y + st.s - h;
+    if (x < 8) x = st.x + st.s + 12;
+    if (x + w > innerWidth - 8) x = Math.max(8, innerWidth - w - 8);
+    el.style.left = x + 'px'; el.style.top = Math.max(8, Math.min(innerHeight - h - 8, y)) + 'px';
+  }
+  function closeAll() { menu.hidden = think.hidden = card.hidden = true; $('hello').hidden = true; } // 말풍선은 처음 한 번만
+  document.addEventListener('pointerdown', function (e) { if (!e.target.closest('.float, #pet, [data-copy]')) closeAll(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeAll();
+    // 단축키 Cmd/Ctrl+Shift+Space: 클립보드를 바로 넣는다
+    if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.code === 'Space') { e.preventDefault(); clipIn(false); }
+  });
+  var toastT;
+  function toast(t) { var el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { el.classList.remove('on'); }, 2400); }
+
+  /* ---------- 기록 만들기 ---------- */
+  // 키워드(확장자 · 도메인 · 낱말)로 그룹을 먼저 정한다. 맞는 것이 없으면 분류 안 된 기록(p7)
+  var RULES = [
+    ['p6', /\.(csv|tsv|xlsx?)$|엑셀/i],
+    ['p5', /회의|미팅|안건/],
+    ['p1', /prd|기획|요구사항|로드맵|정책|\.(key|pptx?)$/i],
+    ['p4', /\.(png|jpe?g|gif|webp|svg|fig)$|figma\.com|dribbble|behance|pinterest|디자인|레퍼런스/i],
+    ['p2', /^https?:\/\/|\.(pdf|epub)$|책|읽/i],
+  ];
+  function classify(it) {
+    var hay = (it.body || '') + '\n' + it.title; // 링크는 본문이 주소라 앞(^)에서, 파일은 제목이 뒤($)에서 걸린다
+    var hit = RULES.find(function (r) { return r[1].test(hay); });
+    return hit ? hit[0] : 'p7';
+  }
+  function fmtSize(b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + 'MB' : Math.max(1, Math.round(b / 1024)) + 'KB'; }
+  // shortcut: 따옴표 안의 쉼표는 나누지 못한다. 테스트용 미리보기라 충분하고, 실제 앱은 제대로 된 CSV 파서를 쓴다
+  function parseCsv(text) {
+    var rows = String(text).replace(/^﻿/, '').split(/\r?\n/).filter(function (l) { return l.trim(); }).map(function (l) { return l.split(',').map(function (c) { return c.trim(); }); });
+    return rows.length < 2 ? null : { cols: rows[0].slice(0, 12), rows: rows.slice(1, 301).map(function (r) { return r.slice(0, 12); }) };
+  }
+  function fromText(t) {
+    t = String(t || '').trim();
+    if (!t) return null;
+    if (/^https?:\/\/\S+$/.test(t)) { var h = t; try { h = new URL(t).hostname.replace(/^www\./, ''); } catch (e) { /* 주소 그대로 */ } return { kind: 'link', title: t.replace(/^https?:\/\/(www\.)?/, '').slice(0, 40), meta: h, body: t }; }
+    return { kind: 'text', title: t.split('\n')[0].slice(0, 28), meta: '텍스트 · ' + t.length + '자', body: t.slice(0, 20000) };
+  }
+  function fromNamedText(name, text, size) {
+    var ext = (name.split('.').pop() || '').toUpperCase(), csv = ext === 'CSV' ? parseCsv(text) : null;
+    if (csv) return { kind: 'file', title: name, meta: 'CSV · ' + csv.rows.length + '행', csv: csv };
+    return { kind: 'text', title: name, meta: ext + ' · ' + fmtSize(size), body: String(text).slice(0, 20000) };
+  }
+  function fromFile(f) {
+    var ext = (f.name.split('.').pop() || '').toUpperCase();
+    if (/^(CSV|TXT|MD)$/.test(ext) && f.size < 2e6) return f.text().then(function (tx) { return fromNamedText(f.name, tx, f.size); });
+    return Promise.resolve({ kind: /^image\//.test(f.type) ? 'image' : 'file', title: f.name, meta: (ext || '파일') + ' · ' + fmtSize(f.size) });
+  }
+
+  var queue = Promise.resolve();
+  /** 받아먹기 → 바쁨(분석) → 저장 → 카드. 여러 개가 들어오면 차례로 처리한다 */
+  function collect(it, group) {
+    if (!it) return;
+    queue = queue.then(function () {
+      closeAll();
+      pet.classList.remove('eat'); void pet.offsetWidth; pet.classList.add('eat');
+      $('busy').hidden = false;
+      return new Promise(function (res) { setTimeout(res, 1300); }).then(function () {
+        $('busy').hidden = true;
+        var rec = Object.assign({ id: 'in' + Date.now(), at: new Date().toISOString(), memo: '', group: group || classify(it) }, it);
+        if (exploring) exploreCount++;
+        send(rec); showCard(rec);
+      });
+    });
+  }
+  // 테스트 웹(부모 창)에 기록을 넘긴다. 혼자 열었을 때는 넘길 곳이 없어 화면에만 보인다
+  function send(rec) { if (parent !== window) parent.postMessage({ type: 'sl-record', record: rec }, location.origin); }
+
+  function showCard(rec) {
+    current = rec;
+    $('cardTitle').textContent = '기록을 넣었어요 · ' + rec.title;
+    $('cardSum').textContent = '요약: ' + (rec.kind === 'link' ? rec.meta + ' 링크' : rec.csv ? rec.csv.cols.join(', ') + ' · ' + rec.csv.rows.length + '행' : rec.body ? rec.body.replace(/\s+/g, ' ').slice(0, 80) : rec.meta);
+    $('cardGroup').value = rec.group; $('cardMemo').value = '';
+    near(card);
+  }
+  $('cardGroup').innerHTML = GROUPS.map(function (g) { return '<option value="' + g.id + '">' + g.name + '</option>'; }).join('');
+  $('cardGroup').addEventListener('change', function () { current.group = this.value; send(current); });
+  $('cardMemo').addEventListener('change', function () { current.memo = this.value.trim(); send(current); });
+  $('cardMemo').addEventListener('keydown', function (e) { if (e.key === 'Enter') { this.blur(); card.hidden = true; } });
+  $('cardOk').addEventListener('click', function () { card.hidden = true; });
+
+  /* ---------- 끌어다 놓기 · 붙여넣기 ---------- */
+  // 캐릭터 밖에 놓았을 때 브라우저가 그 파일로 이동하지 않게 막는다
+  addEventListener('dragover', function (e) { e.preventDefault(); pet.classList.toggle('over', !!e.target.closest('#pet')); });
+  addEventListener('drop', function (e) {
+    e.preventDefault(); pet.classList.remove('over');
+    if (!e.target.closest('#pet')) { toast('우주 비행사 위에 놓아 주세요.'); return; }
+    var dt = e.dataTransfer, sample = dt.getData('application/x-sl-sample');
+    if (sample) collect(sampleItem(SAMPLES[+sample]));
+    else if (dt.files && dt.files.length) Array.prototype.forEach.call(dt.files, function (f) { fromFile(f).then(collect); });
+    else collect(fromText(dt.getData('text/uri-list') || dt.getData('text/plain')));
+  });
+  addEventListener('paste', function (e) {
+    if (e.target.closest('input, textarea')) return;
+    var cd = e.clipboardData;
+    if (cd.files && cd.files.length) Array.prototype.forEach.call(cd.files, function (f) { fromFile(f).then(collect); });
+    else collect(fromText(cd.getData('text/plain')));
+  });
+  $('file').addEventListener('change', function () { Array.prototype.forEach.call(this.files, function (f) { fromFile(f).then(collect); }); this.value = ''; });
+
+  /* ---------- 클립보드 ---------- */
+  // shortcut: 메뉴는 이 화면에서 복사한 글만 안다(브라우저는 허락 없이 클립보드를 읽지 못한다). 단축키를 누르면 그때 실제 클립보드를 물어본다
+  function clipIn(asMeeting) {
+    var go = function (t) {
+      var it = fromText(t);
+      if (!it) { toast('클립보드가 비어 있어요.'); return; }
+      if (asMeeting) { it.kind = 'text'; it.title = '회의록 · ' + it.title; collect(it, 'p5'); } else collect(it);
+    };
+    if (clip) return go(clip);
+    if (navigator.clipboard && navigator.clipboard.readText) navigator.clipboard.readText().then(go, function () { go(''); }); else go('');
+  }
+
+  /* ---------- 메뉴 ---------- */
+  function toggleMenu() {
+    if (!menu.hidden) { menu.hidden = true; return; }
+    closeAll();
+    var items = [
+      ['✏️ 지금 내 생각 적기', function () { near(think); $('thinkIn').value = ''; $('thinkIn').focus(); }],
+      ['📸 캡처', function () { var f = $('flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); var d = new Date(), p = function (n) { return String(n).padStart(2, '0'); };
+        collect({ kind: 'image', title: '캡처 ' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + '.' + p(d.getMinutes()) + '.png', meta: 'PNG · 화면 캡처' }); }],
+      ['📎 파일 선택', function () { $('file').click(); }],
+      null,
+      ['🌌 우주 열기', function () { toast('우주는 다음 태스크에서 열려요.'); }],
+      ['💬 우주먼지', function () { toast('우주먼지는 다음 태스크의 화면에서 만날 수 있어요.'); }],
+      [exploring ? '🔭 탐사 종료' : '🔭 탐사 시작', function () {
+        exploring = !exploring;
+        if (exploring) { exploreCount = 0; toast('탐사를 시작했어요. 지금부터 넣는 기록을 모아 둘게요.'); }
+        else toast('탐사를 마쳤어요. 그동안 기록 ' + exploreCount + '개를 모았어요. 정리본은 테스트에서 만들지 않아요.');
+      }],
+      ['⏳ 분석 대기 항목 다시 시도', function () { toast('분석을 기다리는 기록이 없어요.'); }],
+      null,
+      ['앱 종료', function () { toast('테스트에서는 앱을 종료하지 않아요.'); }],
+    ];
+    menu.innerHTML = '';
+    if (clip) {
+      var box = document.createElement('div'); box.className = 'clip';
+      box.innerHTML = '<b>클립보드에 있는 내용을 넣을까요?</b><p></p>';
+      box.querySelector('p').textContent = clip;
+      menu.appendChild(box);
+      items.unshift(['📋 넣기', function () { clipIn(false); }], ['📝 클립보드 글을 회의록으로 넣기', function () { clipIn(true); }], null);
+    }
+    items.forEach(function (it) {
+      if (!it) { menu.appendChild(document.createElement('hr')); return; }
+      var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem'); b.textContent = it[0];
+      b.addEventListener('click', function () { menu.hidden = true; it[1](); });
+      menu.appendChild(b);
+    });
+    near(menu);
+    menu.querySelector('button').focus();
+  }
+
+  think.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var t = $('thinkIn').value.trim();
+    if (!t) return;
+    collect({ kind: 'text', title: t.slice(0, 28), meta: '내 생각 · ' + t.length + '자', body: t }, 'p3');
+  });
+
+  /* ---------- 예시 자료: 바탕화면 파일 2개 + 브라우저 창의 주소 · 글 · 이미지 ---------- */
+  var SAMPLES = [
+    { name: '주간회의 메모.txt', text: '11월 4주차 주간회의\n- 결정: 설문은 금요일에 연다\n- 할 일: 테스트 참가자 5명 모으기' },
+    { name: '독서 목록.csv', text: '제목,저자,읽은 날\n글쓰기의 기술,정우진,11/02\n프롬프트 노트,이서진,11/10\n숫자 읽는 기획,박지우,11/18' },
+    { name: 'https://blog.example.com/ux-writing-guide', plain: true },
+    { name: '기록은 넣는 것보다 다시 찾는 게 더 어렵다. 그래서 저장할 때 한 줄 메모를 남기게 하는 것만으로도 다시 찾을 확률이 크게 오른다.', plain: true },
+    { name: '온보딩 화면 예시.png', image: true },
+  ];
+  function sampleItem(s) { return s.image ? { kind: 'image', title: s.name, meta: 'PNG · 이미지' } : s.plain ? fromText(s.name) : fromNamedText(s.name, s.text, s.text.length * 3); }
+  $('urlText').textContent = SAMPLES[2].name.replace('https://', '');
+  document.querySelector('blockquote').textContent = SAMPLES[3].name;
+  document.querySelectorAll('[data-sample]').forEach(function (el) {
+    var i = +el.dataset.sample, s = SAMPLES[i], nm = el.querySelector('.nm');
+    if (nm) nm.textContent = s.name;
+    el.addEventListener('dragstart', function (e) {
+      // 글을 직접 골라 끄는 중이면 고른 글이 그대로 넘어가게 둔다
+      if (String(getSelection()).trim() && el.tagName !== 'DIV') return;
+      e.dataTransfer.setData('application/x-sl-sample', String(i)); e.dataTransfer.setData('text/plain', s.text || s.name);
+    });
+  });
+  document.querySelector('[data-copy]').addEventListener('click', function () {
+    clip = SAMPLES[2].name;
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(clip).catch(function () { /* 화면 안 클립보드만 쓴다 */ });
+    toast('주소를 복사했어요. 우주 비행사를 누르면 넣을지 물어봐요.');
+  });
+  var tick = function () { var d = new Date(); $('clock').textContent = (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+  tick(); setInterval(tick, 30000);
+  document.addEventListener('copy', function () { var t = String(getSelection()).trim(); if (t) clip = t; });
+
+  // 자가 점검: 그룹 배정 규칙이 기대대로인지 (어긋나면 콘솔에 알린다)
+  console.assert(classify(sampleItem(SAMPLES[0])) === 'p5' && classify(sampleItem(SAMPLES[1])) === 'p6' && classify(sampleItem(SAMPLES[2])) === 'p2' && classify(sampleItem(SAMPLES[3])) === 'p7' && classify(sampleItem(SAMPLES[4])) === 'p4', '그룹 배정 규칙이 예시와 맞지 않아요');
+})();
+</script>
+</body>
+</html>

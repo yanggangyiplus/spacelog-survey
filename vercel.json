@@ -1,0 +1,6 @@
+{
+  "buildCommand": "node survey/survey-web/build.mjs",
+  "outputDirectory": "survey/survey-web/dist",
+  "framework": null,
+  "installCommand": ""
+}

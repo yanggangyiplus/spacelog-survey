@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>SPACELOG 디자인 A/B 테스트 &amp; 설문</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="intro" class="page">
+  <p class="logo">SPACELOG</p>
+  <div class="hero" aria-hidden="true"><img src="collector/astro-A.webp" alt=""><b class="vs">VS</b><img src="collector/astro-B.png" alt=""></div>
+  <h1>디자인 A/B 테스트 &amp; 설문</h1>
+  <p>흩어진 기록을 우주에 모아 두고 다시 찾는 서비스, SPACELOG의 디자인 두 가지를 차례로 써 보는 테스트예요. 모두 10분 정도 걸리고 익명으로 진행돼요.</p>
+  <p class="callout"><b>이번 테스트는 디자인 테스트예요.</b> 디자인을 비교하는 데 필요한 최소한의 기능만 넣어 두었어요. 눌러도 동작하지 않거나 안내만 뜨는 버튼이 있을 수 있어요.<br><b>디자인 테스트가 끝나면 짧은 설문이 나와요.</b> 어떤 디자인이 더 편했는지 고르고, 저장 습관에 대한 질문에 답해요.</p>
+  <ol>
+    <li><b>디자인 A</b>, <b>디자인 B</b> 순서로 디자인마다 태스크 3개를 해요. 문서 보기에서 기록 찾기, 공간 보기에서 기록 찾기, 수집 앱으로 기록 저장하기.</li>
+    <li>태스크마다 먼저 <b>튜토리얼</b>이 나와요. 읽고 ‘해 볼게요’를 누르면 시작돼요.</li>
+    <li>태스크가 끝나면 화면 위의 <b>완료</b>, <b>모르겠어요</b>, <b>건너뛰기</b> 중 하나를 눌러 주세요.</li>
+    <li>끝나면 어떤 디자인이 더 편했는지 고르고, 저장 습관 설문(3분)에 답해요.</li>
+  </ol>
+  <p class="fine">PC의 크롬 브라우저에서 창을 넓게 두고 진행해 주세요. 화면을 처음 열 때 불러오는 데 몇 초 걸릴 수 있어요.</p>
+  <button type="button" class="pill main" id="start">시작하기</button>
+</main>
+
+<div id="test" hidden>
+  <header id="bar">
+    <b id="design" class="badge"></b>
+    <div class="what">
+      <span class="fine" id="step"></span>
+      <b id="taskTitle"></b>
+      <span id="taskText"></span>
+    </div>
+    <div class="acts" id="acts"></div>
+    <button type="button" class="pill" id="guideOpen">튜토리얼</button>
+    <button type="button" class="pill" data-restart>처음부터 다시</button>
+  </header>
+  <div id="stage">
+    <iframe id="frame" title="테스트 화면" allow="clipboard-read; clipboard-write"></iframe>
+    <div id="guide" role="dialog" aria-modal="true" aria-labelledby="guideTitle" hidden>
+      <i id="ring" aria-hidden="true"></i>
+      <span id="ghost" aria-hidden="true" hidden></span>
+      <span id="keys" aria-hidden="true" hidden></span>
+      <svg id="cursor" aria-hidden="true" viewBox="0 0 24 24" width="34" height="34"><path d="M5 2l14 11h-7l4 8-3 1.5-4-8-4 5z" fill="#fff" stroke="#1d1d1f" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      <div class="dock">
+        <p class="fine">튜토리얼 · <span id="guideTitle"></span></p>
+        <p class="goal"><span class="fine">할 일</span><b id="guideGoal"></b></p>
+        <p id="guideCap" aria-live="polite"></p>
+        <div class="row"><span id="guideDots" aria-hidden="true"></span><span class="fine">디자인 테스트라 일부 기능만 동작해요.</span><button type="button" class="pill main" id="guideGo">해 볼게요</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main id="prefer" class="page" hidden>
+  <p class="logo">SPACELOG</p>
+  <h1 id="preferText"></h1>
+  <p>디자인 테스트가 끝났어요. 하나를 고르면 설문으로 넘어가요.</p>
+  <div class="choose">
+    <button type="button" class="pick" data-pick="A"><img src="collector/astro-A.webp" alt=""><b class="badge" data-d="A">디자인 A</b></button>
+    <button type="button" class="pick" data-pick="B"><img src="collector/astro-B.png" alt=""><b class="badge" data-d="B">디자인 B</b></button>
+  </div>
+</main>
+
+<main id="survey" class="page" hidden>
+  <p class="logo">SPACELOG</p>
+  <h1>기록 및 저장 습관 설문</h1>
+  <p id="surveyIntro"></p>
+  <form id="form" novalidate></form>
+</main>
+
+<main id="done" class="page" hidden>
+  <p class="logo">SPACELOG</p>
+  <div class="hero" aria-hidden="true"><img src="collector/astro-A.webp" alt=""><img src="collector/astro-B.png" alt=""></div>
+  <h1>응답이 저장됐어요</h1>
+  <p>참여해 주셔서 고맙습니다. 이 창은 닫아도 돼요.</p>
+  <button type="button" class="pill" data-restart>처음부터 다시</button>
+</main>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="questions.js"></script>
+<script src="adapters.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
